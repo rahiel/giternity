@@ -22,6 +22,7 @@ setup(
     url="https://github.com/rahiel/giternity",
     license="GPLv3+",
 
+    python_requires=">=3.5",
     py_modules=["giternity"],
     install_requires=["requests", "toml"],
     entry_points={"console_scripts": ["giternity=giternity:main"]},
