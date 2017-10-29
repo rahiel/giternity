@@ -17,7 +17,7 @@ except:
 setup(
     name="giternity",
     version=__version__,
-    description="Mirror git repositories.",
+    description="Mirror git repositories and retrieve metadata for cgit.",
     long_description=long_description,
     url="https://github.com/rahiel/giternity",
     license="GPLv3+",

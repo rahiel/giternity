@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# giternity - Mirror git repositories
+# giternity - Mirror git repositories and retrieve metadata for cgit
 # Copyright (C) 2017 Rahiel Kasim
 #
 # This program is free software: you can redistribute it and/or modify
@@ -21,16 +21,17 @@ import sys
 from os.path import exists
 from pwd import getpwnam
 from subprocess import CalledProcessError, run
+from typing import Optional
 
 import requests
 import toml
 
 
-__version__ = "0.1"
+__version__ = "0.2"
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Mirror git repositories.",
+    parser = argparse.ArgumentParser(description="Mirror git repositories and retrieve metadata for cgit.",
                                      epilog="Homepage: https://github.com/rahiel/giternity")
     parser.add_argument("-c", "--configure", help="configure %(prog)s", action="store_true")
     parser.add_argument("--version", action="version", version="%(prog)s {}".format(__version__))
@@ -43,11 +44,12 @@ def main():
         print("Please place your configuration at " + markup("/etc/giternity.toml", "bold"))
         sys.exit(1)
 
-    git_data_path = config.get("git_data_path", "/srv/git/")
-    cgit_url = config.get("cgit_url")
+    git_data_path = trailing_slash(config.get("git_data_path", "/srv/git/"))
+    checkout_path = trailing_slash(config.get("checkout_path"))
+    cgit_url = trailing_slash(config.get("cgit_url"))
 
     if args.configure:
-        return configure(git_data_path)
+        return configure(git_data_path, checkout_path)
 
     if config.get("github") and config["github"].get("repositories"):
         gh = GitHub(cgit_url=cgit_url)
@@ -67,16 +69,29 @@ def main():
                     with open(path + "cgitrc", "w") as f:
                         f.write(gh.repo_to_cgitrc(repo))
 
+    def find_repos(path: str):
+        for entry in os.scandir(path):
+            if entry.is_dir():
+                if is_bare_repo(entry.path):
+                    clone(entry.path, entry.path.replace(git_data_path, checkout_path))
+                else:
+                    find_repos(entry.path)
 
-def configure(git_data_path: str):
+    if checkout_path:
+        find_repos(git_data_path)
+
+
+def configure(git_data_path: str, checkout_path: str = None):
     try:
         try:
             getpwnam("giternity")
         except KeyError:
             run("adduser giternity --system --no-create-home".split(), check=True)
 
-        run(["mkdir", "-p", git_data_path], check=True)
-        run(["chown", "-R", "giternity", git_data_path], check=True)
+        paths = [git_data_path, checkout_path] if checkout_path else [git_data_path]
+        for path in paths:
+            run(["mkdir", "-p", path], check=True)
+            run(["chown", "-R", "giternity", path], check=True)
 
         cron = """SHELL=/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
@@ -107,6 +122,25 @@ def mirror(url: str, path: str):
     os.makedirs(path + "info/web/", exist_ok=True)
     with open(path + "info/web/last-modified", "wb") as f:
         f.write(date.stdout)
+
+
+def clone(source: str, destination: str):
+    if is_work_tree(destination):
+        run(["git", "-C", destination, "pull"], stdout=subprocess.DEVNULL)
+    else:
+        run(["git", "clone", source, destination], stdout=subprocess.DEVNULL)
+
+
+def is_bare_repo(path: str):
+    is_git = run(["git", "-C", path, "rev-parse", "--is-bare-repository"],
+                 stdout=subprocess.PIPE, stderr=subprocess.DEVNULL).stdout.strip()
+    return True if is_git == b"true" else False
+
+
+def is_work_tree(path: str):
+    is_work = run(["git", "-C", path, "rev-parse", "--is-inside-work-tree"],
+                  stdout=subprocess.PIPE, stderr=subprocess.DEVNULL).stdout.strip()
+    return True if is_work == b"true" else False
 
 
 class GitHub:
@@ -152,6 +186,13 @@ def markup(text: str, style: str):
     ansi_codes = {"bold": "\033[1m", "red": "\033[31m", "green": "\033[32m",
                   "cyan": "\033[36m", "magenta": "\033[35m"}
     return ansi_codes[style] + text + "\033[0m"
+
+
+def trailing_slash(path: Optional[str]):
+    if path:
+        return path if path.endswith("/") else path + "/"
+    else:
+        return None
 
 
 if __name__ == "__main__":
