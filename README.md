@@ -5,16 +5,16 @@
 [![Downloads](https://www.cpu.re/static/giternity/downloads.svg)](https://www.cpu.re/static/giternity/downloads-by-python-version.txt)
 [![License](https://img.shields.io/badge/License-GPLv3+-blue.svg)](https://github.com/rahiel/giternity/blob/master/LICENSE.txt)
 
-Giternity is a tool to mirror your git repositories from GitHub. You can specify
-a username/organization to mirror all their repositories, or just individual
-repo's. It retrieves some repo metadata so they can be nicely served with
+Giternity is a tool to mirror git repositories from GitHub. You can specify a
+username/organization to mirror all their repositories, or just individual
+repos. It retrieves some repo metadata so they can be nicely served with
 [cgit][]. Run giternity periodically to update the mirrors.
 
 An example result is [git.cpu.re][]. Follow the [tutorial][] to host your own.
 
 [cgit]: https://git.zx2c4.com/cgit/about/
 [git.cpu.re]: https://git.cpu.re/
-[tutorial]: https://www.cpu.re/mirror-git-repositories-and-serve-them-with-cgit/
+[tutorial]: https://www.rahielkasim.com/mirror-git-repositories-and-serve-them-with-cgit/
 
 # Installation
 
