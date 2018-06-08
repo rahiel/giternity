@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import argparse
 import os
+import re
 import subprocess
 import sys
 from os.path import exists
@@ -159,9 +160,18 @@ class GitHub:
         return data
 
     def get_repos(self, user: str):
-        data = self.s.get(self.api + "/users/{}/repos".format(user)).json()
+        (data, next_page) = self.get_repos_page(user, 1)
+        while next_page:
+            (d, next_page) = self.get_repos_page(user, next_page)
+            data += d
         data = [r for r in data if not r["fork"]]
         return data
+
+    def get_repos_page(self, user: str, page: int):
+        result = self.s.get(self.api + "/users/{}/repos?per_page=100&page={}".format(user, page))
+        link_header = "Link" in result.headers and re.search('<[^>]+page=(\d+)>; rel="next"', str(result.headers["Link"]))
+        next_page = link_header and int(link_header.groups()[0])
+        return (result.json(), next_page)
 
     def repo_to_cgitrc(self, data):
         cgitrc = []
