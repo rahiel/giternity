@@ -28,7 +28,7 @@ import requests
 import toml
 
 
-__version__ = "0.3"
+__version__ = "0.4"
 
 
 def main():
@@ -99,14 +99,14 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
 # m h dom mon dow user  command
 0 * * * * giternity giternity\n"""
-        # check if platform is OpenBSD
-        # as it uses a different crontab location
-        if sys.platform.startswith('openbsd'):
-            with open("/var/cron/tabs/giternity", "w") as f:
-                f.write(cron)
+
+        if sys.platform.startswith("openbsd"):
+            cron_path = "/var/cron/tabs/giternity"
         else:
-            with open("/etc/cron.d/giternity", "w") as f:
-                f.write(cron)
+            cron_path = "/etc/cron.d/giternity"
+
+        with open(cron_path, "w") as f:
+            f.write(cron)
 
     except (FileNotFoundError, PermissionError, CalledProcessError):
         print("Please run the configuration with root privileges: " +
