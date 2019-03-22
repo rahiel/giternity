@@ -96,6 +96,7 @@ def configure(git_data_path: str, checkout_path: str = None):
 
         cron = """SHELL=/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+HOME=/tmp
 
 # m h dom mon dow user  command
 0 * * * * giternity giternity\n"""
