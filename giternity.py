@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # giternity - Mirror git repositories and retrieve metadata for cgit
-# Copyright (C) 2017-2018 Rahiel Kasim
+# Copyright (C) 2017-2019 Rahiel Kasim
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ import requests
 import toml
 
 
-__version__ = "0.4"
+__version__ = "0.5"
 
 
 def main():
