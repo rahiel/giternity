@@ -46,6 +46,22 @@ repositories = [
     "sunsistemo",
     "TeMPOraL/nyan-mode",
 ]
+
+# Include arbitrary repositories with this pattern (1 [[repos]] block
+# each):
+#
+#    [[repos]]
+#    name = "repo-name"
+#    owner = "owner"
+#    description = "description"
+#    homepage = "https://example.local"
+#    clone_url = "https://git.example.local/owner/repo-name.git"
+[[repos]]
+name = "giternity"
+owner = "rahiel"
+description = "Mirror git repositories and retrieve metadata for cgit "
+homepage = "https://www.rahielkasim.com/mirror-git-repositories-and-serve-them-with-cgit/"
+clone_url = "https://github.com/rahiel/giternity.git"
 ```
 
 Set `git_data_path` to the path where you want to store the git repositories. It
