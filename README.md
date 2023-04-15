@@ -2,7 +2,7 @@
 
 [![Version](https://img.shields.io/pypi/v/giternity.svg)](https://pypi.org/project/giternity/)
 [![pyversions](https://img.shields.io/pypi/pyversions/giternity.svg)](https://pypi.org/project/giternity/)
-[![Downloads](https://www.cpu.re/static/giternity/downloads.svg)](https://www.cpu.re/static/giternity/downloads-by-python-version.txt)
+[![Downloads](https://img.shields.io/pypi/dm/giternity)](https://pypistats.org/packages/giternity)
 [![License](https://img.shields.io/badge/License-GPLv3+-blue.svg)](https://github.com/rahiel/giternity/blob/master/LICENSE.txt)
 
 Giternity is a tool to mirror git repositories from GitHub. You can specify a
