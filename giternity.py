@@ -69,6 +69,20 @@ def main():
                     mirror(repo["clone_url"], path)
                     with open(path + "cgitrc", "w") as f:
                         f.write(gh.repo_to_cgitrc(repo))
+    else:
+        gh = Github(cgit_url=cgit_url)
+
+    # Arbitrary git repositories
+    arbitrary_repos = config.get("repos")
+    if arbitrary_repos:
+        for repo in arbitrary_repos:
+            repo['full_name'] = '{}/{}'.format(repo['owner'], repo['name'])
+            path = "{}{}.git/".format(git_data_path, repo['full_name'])
+            url = repo["clone_url"]
+            metadata = gh.repo_to_cgitrc(repo)
+            mirror(repo["clone_url"], path)
+            with open(path + "cgitrc", "w") as f:
+                f.write(metadata)
 
     def find_repos(path: str):
         for entry in os.scandir(path):
